@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marcadores AR — Imprimir</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    body { padding: 32px 20px 48px; max-width: 520px; margin: 0 auto; }
+    .marker-img {
+      width: 140px;
+      height: 140px;
+      background: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .marker-img canvas { display: block; }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white; color: black; padding: 10px; }
+      .marker-card { border: 1px solid #ccc; break-inside: avoid; }
+      .marker-card .marker-step,
+      .marker-card .marker-name { color: black; }
+    }
+  </style>
+</head>
+<body class="markers-page">
+
+  <div class="no-print">
+    <a href="../index.html" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: none;">← Volver</a>
+    <h1 style="margin-top: 16px;">Marcadores para imprimir</h1>
+    <p class="subtitle">
+      Imprime estos 5 marcadores y pégalos en los puntos del recorrido.
+      Cada uno corresponde a un checkpoint de navegación.
+    </p>
+  </div>
+
+  <div class="marker-grid" id="marker-grid">
+    <!-- Generados por JS abajo -->
+  </div>
+
+  <button class="markers-print-btn no-print" onclick="window.print()">
+    🖨️ Imprimir todos los marcadores
+  </button>
+
+  <p class="no-print" style="text-align: center; color: var(--text-muted); font-size: 0.78rem; margin-top: 16px;">
+    Los marcadores deben quedar al menos del tamaño de una hoja A5 para una buena detección.
+    Imprime en blanco y negro es suficiente.
+  </p>
+
+  <a href="../index.html" class="markers-back no-print">← Volver al inicio</a>
+
+  <script>
+    /**
+     * Genera los marcadores de código de barras 3x3 para AR.js.
+     * Cada valor (0-4) se codifica como 6 bits en una grilla de 4x4 celdas
+     * dentro de un borde negro, siguiendo el estándar de AR.js matrixCodeType: 3x3.
+     *
+     * Patrón visual simplificado (compatible con AR.js 3x3):
+     *  - Marco negro exterior (2 celdas de ancho)
+     *  - Zona interior 4x4 codificada en bits
+     *  - Esquina superior izquierda siempre blanca (orientación)
+     */
+
+    const CHECKPOINTS = [
+      { value: 0, step: 'CHECKPOINT 0', name: 'INICIO',     icon: '🚀', color: '#00FF88' },
+      { value: 1, step: 'CHECKPOINT 1', name: 'ESCALERAS',  icon: '🔻', color: '#FFD700' },
+      { value: 2, step: 'CHECKPOINT 2', name: 'PISO 3',     icon: '↩️', color: '#00BFFF' },
+      { value: 3, step: 'CHECKPOINT 3', name: 'PASILLO',    icon: '📍', color: '#FF6B35' },
+      { value: 4, step: 'CHECKPOINT 4', name: 'DESTINO',    icon: '🎯', color: '#FF4444' },
+    ];
+
+    // Patrones de bits para los valores 0-4 en una grilla de 3x3 interna
+    // Representados como arrays de 6 bits (las 6 celdas codificables del patrón 3x3)
+    // Esquema: fila superior [b5 b4 b3] fila inferior [b2 b1 b0]
+    // El bit más alto va a la celda top-left (pero esa siempre es blanca para orientación)
+    // Estos patrones están mapeados al estándar hamming AR.js 3x3
+    const BIT_PATTERNS = {
+      0: [0,0,0,0,0,0],
+      1: [0,0,0,0,0,1],
+      2: [0,0,0,0,1,0],
+      3: [0,0,0,0,1,1],
+      4: [0,0,0,1,0,0],
+    };
+
+    function drawMarker(canvas, value, accentColor) {
+      const SIZE = 140;
+      const CELLS = 7;       // 7x7 celdas totales (incluye borde de 1 celda)
+      const CELL = SIZE / CELLS;
+
+      canvas.width  = SIZE;
+      canvas.height = SIZE;
+      const ctx = canvas.getContext('2d');
+
+      // Fondo blanco
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, SIZE, SIZE);
+
+      // Marco negro (borde exterior de 1 celda)
+      ctx.fillStyle = '#000000';
+      for (let r = 0; r < CELLS; r++) {
+        for (let c = 0; c < CELLS; c++) {
+          const isBorder = r === 0 || r === CELLS - 1 || c === 0 || c === CELLS - 1;
+          if (isBorder) {
+            ctx.fillRect(c * CELL, r * CELL, CELL, CELL);
+          }
+        }
+      }
+
+      // Zona interior: 5x5 (celdas 1-5 en fila/col)
+      // La celda interior codificada es 3x3 (celdas 2-4)
+      const bits = BIT_PATTERNS[value] || [0,0,0,0,0,0];
+
+      // Celda (1,1) = esquina blanca (orientación)
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(1 * CELL, 1 * CELL, CELL, CELL);
+
+      // Celdas de datos: posiciones dentro del área 5x5 interior
+      // Mapeamos los 6 bits a 6 posiciones de la zona interior
+      const dataPositions = [
+        [1, 3], [1, 4], // fila 1, cols 3-4
+        [2, 2], [2, 3], // fila 2, cols 2-3
+        [3, 2], [3, 3], // fila 3, cols 2-3
+      ];
+
+      // Interior blanco primero
+      for (let r = 1; r <= 5; r++) {
+        for (let c = 1; c <= 5; c++) {
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(c * CELL, r * CELL, CELL, CELL);
+        }
+      }
+
+      // Dibujar bits de datos
+      bits.forEach((bit, i) => {
+        if (bit === 1) {
+          const [row, col] = dataPositions[i];
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(col * CELL, row * CELL, CELL, CELL);
+        }
+      });
+
+      // Separador de valor numérico (esquina interior)
+      // Celda (3,4) y (4,4) negras si value > 0 para diferenciación visual rápida
+      if (value > 0) {
+        for (let i = 0; i < Math.min(value, 4); i++) {
+          ctx.fillStyle = '#000000';
+          ctx.fillRect((2 + i) * CELL, 4 * CELL, CELL * 0.8, CELL * 0.8);
+        }
+      }
+
+      // Número de valor en centro (guía visual humana, no afecta AR)
+      ctx.fillStyle = accentColor;
+      ctx.font = `bold ${Math.round(CELL * 1.4)}px monospace`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(value), 3.5 * CELL, 3.5 * CELL);
+    }
+
+    // Renderizar todas las tarjetas
+    const grid = document.getElementById('marker-grid');
+
+    CHECKPOINTS.forEach(({ value, step, name, icon, color }) => {
+      const card = document.createElement('div');
+      card.className = 'marker-card';
+      card.innerHTML = `
+        <div class="marker-img" id="wrap-${value}"></div>
+        <div class="marker-step">${step}</div>
+        <div class="marker-name">${icon} ${name}</div>
+        <div class="marker-value">barcode value="${value}"</div>
+      `;
+      grid.appendChild(card);
+
+      const canvas = document.createElement('canvas');
+      document.getElementById(`wrap-${value}`).appendChild(canvas);
+      drawMarker(canvas, value, color);
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,697 @@
+/* ═══════════════════════════════════════════
+   AR NAV — Estilos globales
+   Mobile-first, dark theme, neon green accent
+═══════════════════════════════════════════ */
+
+:root {
+  --accent:       #00FF88;
+  --accent-dim:   #00cc6a;
+  --accent-glow:  rgba(0, 255, 136, 0.3);
+  --warn:         #FFD700;
+  --info:         #00BFFF;
+  --danger:       #FF4444;
+  --orange:       #FF6B35;
+  --bg:           #000000;
+  --bg-card:      rgba(255, 255, 255, 0.05);
+  --bg-card-border: rgba(255, 255, 255, 0.1);
+  --text:         #FFFFFF;
+  --text-muted:   rgba(255, 255, 255, 0.55);
+  --radius:       16px;
+  --radius-sm:    10px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.ar-view {
+  background: transparent !important;
+}
+
+/* ── Utilidades ── */
+.text-accent { color: var(--accent); }
+
+/* ═══════════════════════════════════════════
+   LANDING PAGE
+═══════════════════════════════════════════ */
+body.landing {
+  overflow-y: auto;
+  height: auto;
+  min-height: 100%;
+  background: #050a0e !important;
+}
+
+.landing__bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.landing__orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.15;
+}
+
+.landing__orb--1 {
+  width: 350px;
+  height: 350px;
+  background: var(--accent);
+  top: -100px;
+  right: -100px;
+}
+
+.landing__orb--2 {
+  width: 250px;
+  height: 250px;
+  background: #0066ff;
+  bottom: 50px;
+  left: -80px;
+}
+
+.landing__content {
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 48px 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  min-height: 100vh;
+}
+
+/* Header */
+.landing__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.landing__logo {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+.landing__title {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.landing__subtitle {
+  font-size: 1rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.landing__badge {
+  display: inline-block;
+  padding: 4px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 100px;
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Route card */
+.route-card {
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.route-point {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.route-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.route-dot--start { background: var(--accent); }
+.route-dot--end   { background: var(--danger); }
+
+.route-line {
+  width: 2px;
+  height: 28px;
+  background: linear-gradient(to bottom, var(--accent), var(--danger));
+  margin-left: 6px;
+  opacity: 0.5;
+}
+
+.route-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.route-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.route-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Steps */
+.steps__title {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.steps__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+}
+
+.step-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.step-text {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.step-text strong {
+  color: var(--text);
+}
+
+/* Tip */
+.landing__tip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 255, 136, 0.06);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 0.82rem;
+  color: var(--accent-dim);
+}
+
+.tip-icon { font-size: 1.1rem; }
+
+/* CTA Button */
+.btn-start {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--accent);
+  color: #000;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: var(--radius);
+  padding: 18px 32px;
+  letter-spacing: 0.02em;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 0 30px var(--accent-glow);
+}
+
+.btn-start:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.btn-start__arrow {
+  font-size: 1.3rem;
+  transition: transform 0.2s;
+}
+
+.btn-start:hover .btn-start__arrow {
+  transform: translateX(4px);
+}
+
+/* Footer */
+.landing__footer {
+  text-align: center;
+  padding-bottom: 20px;
+}
+
+.link-markers {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ═══════════════════════════════════════════
+   AR VIEW — Pantalla principal de navegación
+═══════════════════════════════════════════ */
+body.ar-view {
+  background: transparent !important;
+}
+
+body.ar-view a-scene {
+  background: transparent !important;
+}
+
+body.ar-view .a-canvas {
+  background: transparent !important;
+}
+
+/* A-Frame ocupa toda la pantalla */
+.a-canvas {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  display: block !important;
+}
+
+a-scene {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+}
+
+a-scene canvas {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ── UI Overlay ── */
+.ui-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0;
+}
+
+.ui-overlay > * {
+  pointer-events: all;
+}
+
+/* Header con progreso */
+.ui-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 16px 16px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
+}
+
+.btn-back, .btn-help {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--bg-card-border);
+  background: rgba(0,0,0,0.5);
+  color: var(--text);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  backdrop-filter: blur(10px);
+}
+
+.ui-progress-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ui-step-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+.ui-progress-bar {
+  height: 4px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.ui-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 100px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+/* Instrucción inferior */
+.ui-instruction {
+  margin: 0 16px 24px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: all 0.4s ease;
+}
+
+.instruction-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.instruction-text {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.instruction-text strong {
+  color: var(--text);
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 2px;
+}
+
+/* Indicador de detección */
+.ui-detection {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.ui-detection.active {
+  display: flex;
+}
+
+.detection-pulse {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 3px solid var(--accent);
+  animation: pulse-ring 0.8s ease-out forwards;
+}
+
+@keyframes pulse-ring {
+  0%   { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+#detection-label {
+  background: var(--accent);
+  color: #000;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 6px 16px;
+  border-radius: 100px;
+  letter-spacing: 0.05em;
+  animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Panel de llegada */
+.ui-arrival {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+  padding: 40px;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.arrival-emoji {
+  font-size: 5rem;
+  animation: bounce 1s ease infinite alternate;
+}
+
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-12px); }
+}
+
+.arrival-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.arrival-subtitle {
+  font-size: 1rem;
+  color: var(--text-muted);
+  max-width: 280px;
+}
+
+.btn-restart {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 10px;
+  padding: 14px 32px;
+  background: var(--accent);
+  color: #000;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  border-radius: var(--radius);
+  box-shadow: 0 0 30px var(--accent-glow);
+}
+
+/* Modal de ayuda */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
+}
+
+.modal {
+  width: 100%;
+  background: #111;
+  border: 1px solid var(--bg-card-border);
+  border-radius: 24px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+.modal h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.help-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.help-list li {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.btn-close-modal {
+  width: 100%;
+  padding: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ═══════════════════════════════════════════
+   MARKERS PAGE
+═══════════════════════════════════════════ */
+body.markers-page {
+  overflow-y: auto;
+  height: auto;
+  background: #050a0e;
+  padding: 40px 20px;
+}
+
+.markers-page h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.markers-page .subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 32px;
+}
+
+.marker-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.marker-card {
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.marker-card img,
+.marker-card canvas {
+  width: 100%;
+  max-width: 140px;
+  border-radius: 8px;
+  background: white;
+  padding: 4px;
+}
+
+.marker-card .marker-step {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.marker-card .marker-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.marker-card .marker-value {
+  font-size: 0.75rem;
+  color: var(--accent);
+  font-family: monospace;
+}
+
+.markers-print-btn {
+  display: block;
+  width: 100%;
+  max-width: 480px;
+  margin: 24px auto 0;
+  padding: 16px;
+  background: var(--accent);
+  color: #000;
+  font-weight: 700;
+  font-size: 1rem;
+  text-align: center;
+  border-radius: var(--radius);
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+}
+
+.markers-back {
+  display: block;
+  text-align: center;
+  margin-top: 16px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

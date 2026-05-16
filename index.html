@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>AR Nav — Orientación Indoor</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="assets/icons/icon-192.png" />
+</head>
+<body class="landing">
+
+  <div class="landing__bg">
+    <div class="landing__orb landing__orb--1"></div>
+    <div class="landing__orb landing__orb--2"></div>
+  </div>
+
+  <main class="landing__content">
+
+    <header class="landing__header">
+      <div class="landing__logo">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="24" cy="24" r="22" stroke="#00FF88" stroke-width="2"/>
+          <path d="M24 12 L24 24 L32 28" stroke="#00FF88" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="24" cy="24" r="3" fill="#00FF88"/>
+          <path d="M18 8 L24 4 L30 8" stroke="#00FF88" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1 class="landing__title">AR <span class="text-accent">Nav</span></h1>
+      <p class="landing__subtitle">Navegación en Realidad Aumentada</p>
+      <div class="landing__badge">Demo Universitario</div>
+    </header>
+
+    <section class="landing__route">
+      <div class="route-card">
+        <div class="route-point route-point--start">
+          <div class="route-dot route-dot--start"></div>
+          <div class="route-info">
+            <span class="route-label">ORIGEN</span>
+            <span class="route-name">Piso 4 — Inicio del pasillo</span>
+          </div>
+        </div>
+        <div class="route-line"></div>
+        <div class="route-point route-point--end">
+          <div class="route-dot route-dot--end"></div>
+          <div class="route-info">
+            <span class="route-label">DESTINO</span>
+            <span class="route-name">Piso 3 — Tienda del pasillo</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="landing__steps">
+      <h2 class="steps__title">¿Cómo funciona?</h2>
+      <ol class="steps__list">
+        <li class="step-item">
+          <div class="step-icon">📷</div>
+          <div class="step-text">
+            <strong>Permite el acceso</strong> a la cámara cuando te lo pida la app
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-icon">🔍</div>
+          <div class="step-text">
+            <strong>Busca los marcadores</strong> impresos en el recorrido
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-icon">➡️</div>
+          <div class="step-text">
+            <strong>Sigue las flechas</strong> que aparecen en pantalla
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-icon">🎯</div>
+          <div class="step-text">
+            <strong>Llega al destino</strong> guiado paso a paso
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <div class="landing__tip">
+      <span class="tip-icon">💡</span>
+      <span>Usa Google Chrome en tu celular para mejor compatibilidad</span>
+    </div>
+
+    <a href="app.html" class="btn-start">
+      <span class="btn-start__text">Iniciar Navegación</span>
+      <span class="btn-start__arrow">→</span>
+    </a>
+
+    <footer class="landing__footer">
+      <a href="markers/index.html" class="link-markers">Ver marcadores para imprimir</a>
+    </footer>
+
+  </main>
+
+  <script>
+    // Registro del Service Worker para PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

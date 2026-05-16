@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>AR Nav — Navegando</title>
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- A-Frame: motor 3D -->
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <!-- AR.js: detección de marcadores -->
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/aframe/build/aframe-ar.js"></script>
+</head>
+<body class="ar-view">
+
+  <!-- ═══════════════════════════════════════
+       LOADER — Mientras AR.js inicia
+  ═══════════════════════════════════════ -->
+  <div id="loading-overlay" style="position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 99999; flex-direction: column; gap: 16px; pointer-events: none;">
+    <div style="width: 48px; height: 48px; border: 3px solid #00FF88; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+    <span style="color: #00FF88; font-size: 0.9rem;">Iniciando cámara AR...</span>
+  </div>
+
+  <script>
+    // Fallback: quitar loader después de 3 segundos sin importar qué
+    setTimeout(() => {
+      const loader = document.getElementById('loading-overlay');
+      if (loader) {
+        loader.style.display = 'none !important';
+        loader.style.opacity = '0';
+        loader.style.visibility = 'hidden';
+        loader.style.pointerEvents = 'none';
+      }
+    }, 3000);
+  </script>
+
+  <style>
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+
+  <!-- ═══════════════════════════════════════
+       OVERLAY HTML — Siempre visible sobre el AR
+  ═══════════════════════════════════════ -->
+  <div id="ui-overlay" class="ui-overlay">
+
+    <!-- Header con progreso -->
+    <div class="ui-header">
+      <button class="btn-back" onclick="history.back()">←</button>
+      <div class="ui-progress-wrap">
+        <div class="ui-step-label" id="ui-step-label">Paso 1 de 5</div>
+        <div class="ui-progress-bar">
+          <div class="ui-progress-fill" id="ui-progress-fill" style="width: 0%"></div>
+        </div>
+      </div>
+      <button class="btn-help" id="btn-help">?</button>
+    </div>
+
+    <!-- Panel de instrucción actual -->
+    <div class="ui-instruction" id="ui-instruction">
+      <div class="instruction-icon" id="instruction-icon">🔍</div>
+      <div class="instruction-text" id="instruction-text">
+        Busca el marcador de <strong>INICIO</strong> en el pasillo del piso 4
+      </div>
+    </div>
+
+    <!-- Indicador de detección (aparece al ver un marker) -->
+    <div class="ui-detection" id="ui-detection">
+      <div class="detection-pulse"></div>
+      <span id="detection-label">Marcador detectado</span>
+    </div>
+
+    <!-- Panel de llegada (oculto hasta el final) -->
+    <div class="ui-arrival" id="ui-arrival" style="display:none">
+      <div class="arrival-emoji">🎯</div>
+      <h2 class="arrival-title">¡Llegaste!</h2>
+      <p class="arrival-subtitle">Has llegado a la Tienda del Pasillo 3</p>
+      <a href="index.html" class="btn-restart">Nueva navegación</a>
+    </div>
+
+  </div>
+
+  <!-- Modal de ayuda -->
+  <div class="modal-overlay" id="modal-help" style="display:none">
+    <div class="modal">
+      <h3>¿Necesitas ayuda?</h3>
+      <ul class="help-list">
+        <li>🔍 Apunta la cámara directamente al marcador impreso</li>
+        <li>💡 Asegúrate de tener buena iluminación</li>
+        <li>📐 Mantén el marcador completo en pantalla</li>
+        <li>🚶 Sigue el recorrido en el orden indicado</li>
+      </ul>
+      <button class="btn-close-modal" id="btn-close-modal">Entendido</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       ESCENA AR — A-Frame + AR.js
+  ═══════════════════════════════════════ -->
+  <a-scene
+    embedded
+    arjs="sourceType: webcam;
+          debugUIEnabled: false;
+          detectionMode: mono_and_matrix;
+          matrixCodeType: 3x3;"
+    renderer="alpha: true; antialias: true; precision: medium; logarithmicDepthBuffer: true;"
+    vr-mode-ui="enabled: false"
+    gesture-detector>
+
+    <!-- ── CHECKPOINT 0: INICIO ── -->
+    <a-marker id="marker-0" type="barcode" value="0"
+              smooth="true" smoothCount="10" smoothTolerance="0.01">
+      <!-- Flecha hacia adelante -->
+      <a-entity nav-arrow="direction: forward; color: #00FF88; label: ¡Inicio detectado!; sublabel: Dirígete a las escaleras">
+      </a-entity>
+    </a-marker>
+
+    <!-- ── CHECKPOINT 1: ESCALERAS ── -->
+    <a-marker id="marker-1" type="barcode" value="1"
+              smooth="true" smoothCount="10" smoothTolerance="0.01">
+      <a-entity nav-arrow="direction: down; color: #FFD700; label: Baja al piso 3; sublabel: Usa las escaleras">
+      </a-entity>
+    </a-marker>
+
+    <!-- ── CHECKPOINT 2: PISO 3 ── -->
+    <a-marker id="marker-2" type="barcode" value="2"
+              smooth="true" smoothCount="10" smoothTolerance="0.01">
+      <a-entity nav-arrow="direction: left; color: #00BFFF; label: Gira a la izquierda; sublabel: Avanza por el pasillo">
+      </a-entity>
+    </a-marker>
+
+    <!-- ── CHECKPOINT 3: PASILLO ── -->
+    <a-marker id="marker-3" type="barcode" value="3"
+              smooth="true" smoothCount="10" smoothTolerance="0.01">
+      <a-entity nav-arrow="direction: forward; color: #FF6B35; label: Casi llegás; sublabel: El destino está a pocos metros">
+      </a-entity>
+    </a-marker>
+
+    <!-- ── CHECKPOINT 4: DESTINO ── -->
+    <a-marker id="marker-4" type="barcode" value="4"
+              smooth="true" smoothCount="10" smoothTolerance="0.01">
+      <a-entity destination-marker="name: Tienda del Pasillo; color: #FF4444">
+      </a-entity>
+    </a-marker>
+
+    <a-entity camera></a-entity>
+
+  </a-scene>
+
+  <!-- Scripts propios -->
+  <script src="js/ar-components.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/ui.js"></script>
+
+</body>
+</html>
