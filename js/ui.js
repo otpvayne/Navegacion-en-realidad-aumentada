@@ -15,6 +15,9 @@ const UI = (() => {
     detection:      () => document.getElementById('ui-detection'),
     detectionLabel: () => document.getElementById('detection-label'),
     arrival:        () => document.getElementById('ui-arrival'),
+    directionArrow: () => document.getElementById('ui-direction-arrow'),
+    arrowSymbol:    () => document.getElementById('arrow-symbol'),
+    arrowLabel:     () => document.getElementById('arrow-label'),
     btnHelp:        () => document.getElementById('btn-help'),
     modalHelp:      () => document.getElementById('modal-help'),
     btnCloseModal:  () => document.getElementById('btn-close-modal'),
@@ -136,11 +139,45 @@ const UI = (() => {
 
   document.addEventListener('DOMContentLoaded', init);
 
+  // ── Mostrar flecha de dirección permanente ────────────────────────
+  function showDirectionArrow(direction, label) {
+    const arrow = els.directionArrow();
+    const symbol = els.arrowSymbol();
+    const arrowLabel = els.arrowLabel();
+
+    if (!arrow) return;
+
+    // Mapear dirección a símbolo y rotación
+    const symbols = {
+      forward:  { icon: '⬇', angle: 90 },
+      backward: { icon: '⬆', angle: -90 },
+      left:     { icon: '⬅', angle: 0 },
+      right:    { icon: '➡', angle: 180 },
+      down:     { icon: '⬇', angle: 90 },
+      up:       { icon: '⬆', angle: -90 },
+    };
+
+    const dirData = symbols[direction] || symbols.forward;
+
+    if (symbol) symbol.textContent = dirData.icon;
+    if (arrowLabel) arrowLabel.textContent = label || 'Próximo';
+
+    arrow.style.transform = `translate(-50%, -50%) rotate(${dirData.angle}deg)`;
+    arrow.classList.add('active');
+  }
+
+  function hideDirectionArrow() {
+    const arrow = els.directionArrow();
+    if (arrow) arrow.classList.remove('active');
+  }
+
   // API pública
   return {
     updateStep,
     showDetectionFeedback,
     showArrival,
+    showDirectionArrow,
+    hideDirectionArrow,
   };
 
 })();

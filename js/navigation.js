@@ -55,6 +55,7 @@ const NAV = (() => {
   let currentIndex = 0;         // Índice del checkpoint esperado
   let detectionCooldown = false; // Evita disparos múltiples seguidos
   let initialized = false;
+  let lastDetectedDirection = 'forward'; // Guarda la última dirección detectada
 
   // ── Helpers ────────────────────────────────────────────────────────
 
@@ -83,6 +84,16 @@ const NAV = (() => {
     // Ignorar markers que no son el siguiente en la ruta
     if (markerId !== expected.markerId) return;
 
+    // Guardar dirección para mantener la flecha visible
+    const directionMap = {
+      forward:  'forward',
+      down:     'down',
+      left:     'left',
+      right:    'right',
+      up:       'up',
+    };
+    lastDetectedDirection = directionMap[expected.arDirection] || 'forward';
+
     // Cooldown para evitar re-disparos en el mismo frame
     detectionCooldown = true;
     setTimeout(() => { detectionCooldown = false; }, 2500);
@@ -92,10 +103,12 @@ const NAV = (() => {
     if (isLastCheckpoint()) {
       // Usuario llegó al destino
       UI.showDetectionFeedback('¡Llegaste al destino!');
+      UI.hideDirectionArrow();
       setTimeout(() => UI.showArrival(), 1200);
     } else {
       // Avanzar al siguiente checkpoint
       UI.showDetectionFeedback(expected.detected);
+      UI.showDirectionArrow(lastDetectedDirection, getCurrentCheckpoint().title);
       setTimeout(() => {
         currentIndex++;
         UI.updateStep(getCurrentCheckpoint(), currentIndex, CHECKPOINTS.length);
