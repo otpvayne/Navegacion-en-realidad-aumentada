@@ -5,7 +5,7 @@
  */
 
 // ═══════════════════════════════════════════════════════════
-//  nav-arrow — Flecha 3D con dirección configurable
+//  nav-arrow — Flecha 3D compacta con dirección configurable
 //  Uso: <a-entity nav-arrow="direction: forward; color: #00FF88; label: Texto">
 //  Directions: forward | left | right | down | up
 // ═══════════════════════════════════════════════════════════
@@ -21,7 +21,7 @@ AFRAME.registerComponent('nav-arrow', {
     const { direction, color, label, sublabel } = this.data;
     const el = this.el;
 
-    // Rotaciones para cada dirección (eje X/Y aplicado al contenedor)
+    // Rotaciones para cada dirección
     const rotations = {
       forward:  '0 0 0',
       backward: '0 180 0',
@@ -33,53 +33,54 @@ AFRAME.registerComponent('nav-arrow', {
 
     const wrapper = document.createElement('a-entity');
     wrapper.setAttribute('rotation', rotations[direction] || '0 0 0');
-    wrapper.setAttribute('position', '0 0.1 0');
+    wrapper.setAttribute('position', '0 0.3 0');
+    wrapper.setAttribute('scale',    '1 1 1');
 
-    // — Tronco de la flecha —
+    // — TRONCO: más pequeño (1/3 del original) —
     const shaft = document.createElement('a-cylinder');
-    shaft.setAttribute('radius',   '0.03');
-    shaft.setAttribute('height',   '0.35');
+    shaft.setAttribute('radius',   '0.015');
+    shaft.setAttribute('height',   '0.12');
     shaft.setAttribute('color',    color);
-    shaft.setAttribute('position', '0 0.35 -0.05');
+    shaft.setAttribute('position', '0 0.08 0');
     shaft.setAttribute('rotation', '90 0 0');
-    shaft.setAttribute('material', `color: ${color}; emissive: ${color}; emissiveIntensity: 0.4; opacity: 0.95`);
+    shaft.setAttribute('material', `color: ${color}; emissive: ${color}; emissiveIntensity: 0.6; opacity: 0.95`);
     wrapper.appendChild(shaft);
 
-    // — Punta de la flecha —
+    // — PUNTA: más pequeña —
     const head = document.createElement('a-cone');
-    head.setAttribute('radius-bottom', '0.1');
+    head.setAttribute('radius-bottom', '0.045');
     head.setAttribute('radius-top',    '0');
-    head.setAttribute('height',        '0.22');
+    head.setAttribute('height',        '0.08');
     head.setAttribute('color',         color);
-    head.setAttribute('position',      '0 0.35 -0.28');
+    head.setAttribute('position',      '0 0.12 0');
     head.setAttribute('rotation',      '90 0 0');
-    head.setAttribute('material',      `color: ${color}; emissive: ${color}; emissiveIntensity: 0.5; opacity: 0.95`);
+    head.setAttribute('material',      `color: ${color}; emissive: ${color}; emissiveIntensity: 0.7; opacity: 0.95`);
     wrapper.appendChild(head);
 
-    // — Animación de rebote (flotando) —
+    // — Animación de rebote —
     wrapper.setAttribute('animation__float', {
       property:  'position',
-      from:      '0 0.05 0',
-      to:        '0 0.18 0',
+      from:      '0 0.25 0',
+      to:        '0 0.40 0',
       dir:       'alternate',
       loop:      true,
       dur:       900,
       easing:    'easeInOutSine',
     });
 
-    // — Animación de brillo pulsante —
+    // — Brillo pulsante —
     shaft.setAttribute('animation__glow', {
       property:  'material.emissiveIntensity',
-      from:      0.2,
-      to:        0.8,
+      from:      0.3,
+      to:        0.9,
       dir:       'alternate',
       loop:      true,
       dur:       800,
     });
     head.setAttribute('animation__glow', {
       property:  'material.emissiveIntensity',
-      from:      0.2,
-      to:        0.8,
+      from:      0.3,
+      to:        0.9,
       dir:       'alternate',
       loop:      true,
       dur:       800,
@@ -87,43 +88,45 @@ AFRAME.registerComponent('nav-arrow', {
 
     el.appendChild(wrapper);
 
-    // — Plano base circular (halo) —
+    // — HALO pequeño en la base —
     const halo = document.createElement('a-circle');
-    halo.setAttribute('radius',   '0.22');
+    halo.setAttribute('radius',   '0.12');
     halo.setAttribute('rotation', '-90 0 0');
     halo.setAttribute('position', '0 0.005 0');
-    halo.setAttribute('material', `color: ${color}; opacity: 0.15; transparent: true; side: double`);
+    halo.setAttribute('material', `color: ${color}; opacity: 0.2; transparent: true; side: double`);
     halo.setAttribute('animation__halo', {
       property: 'material.opacity',
-      from:     0.05,
-      to:       0.25,
+      from:     0.1,
+      to:       0.35,
       dir:      'alternate',
       loop:     true,
       dur:      1200,
     });
     el.appendChild(halo);
 
-    // — Texto label principal —
+    // — TEXTO: más pequeño y mejor posicionado —
     if (label) {
       const text = document.createElement('a-text');
       text.setAttribute('value',    label);
-      text.setAttribute('position', '0 0.85 0');
+      text.setAttribute('position', '0 0.50 0');
       text.setAttribute('align',    'center');
       text.setAttribute('color',    color);
-      text.setAttribute('scale',    '0.55 0.55 0.55');
+      text.setAttribute('scale',    '0.35 0.35 0.35');
       text.setAttribute('look-at',  '[camera]');
+      text.setAttribute('material', `color: ${color}; emissive: ${color}; emissiveIntensity: 0.4`);
       el.appendChild(text);
     }
 
-    // — Texto sublabel —
+    // — SUBTEXTO —
     if (sublabel) {
       const sub = document.createElement('a-text');
       sub.setAttribute('value',    sublabel);
-      sub.setAttribute('position', '0 0.65 0');
+      sub.setAttribute('position', '0 0.38 0');
       sub.setAttribute('align',    'center');
       sub.setAttribute('color',    '#FFFFFF');
-      sub.setAttribute('scale',    '0.38 0.38 0.38');
+      sub.setAttribute('scale',    '0.25 0.25 0.25');
       sub.setAttribute('look-at',  '[camera]');
+      sub.setAttribute('material', `color: white; opacity: 0.9`);
       el.appendChild(sub);
     }
   },
