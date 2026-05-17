@@ -6,6 +6,20 @@
 
 const UI = (() => {
 
+  // ── Estado del giroscopio ──────────────────────────────────────────
+  let deviceOrientation = { alpha: 0, beta: 0, gamma: 0 };
+  let referenceOrientation = { alpha: 0 };
+  let hasGyroscope = false;
+
+  // Detectar y escuchar giroscopio
+  window.addEventListener('deviceorientation', (event) => {
+    deviceOrientation.alpha = event.alpha || 0;
+    deviceOrientation.beta = event.beta || 0;
+    deviceOrientation.gamma = event.gamma || 0;
+    hasGyroscope = true;
+    updateArrowRotation();
+  }, true);
+
   // ── Referencias al DOM ─────────────────────────────────────────────
   const els = {
     stepLabel:      () => document.getElementById('ui-step-label'),
@@ -139,6 +153,20 @@ const UI = (() => {
 
   document.addEventListener('DOMContentLoaded', init);
 
+  // ── Actualizar rotación de flecha con giroscopio ────────────────────
+  function updateArrowRotation() {
+    if (!hasGyroscope) return;
+    const arrow = els.directionArrow();
+    if (!arrow || !arrow.classList.contains('active')) return;
+
+    // Calcular rotación relativa desde la referencia
+    const deltaRotation = deviceOrientation.alpha - referenceOrientation.alpha;
+    const currentRotation = parseFloat(arrow.dataset.baseRotation || 0);
+    const finalRotation = currentRotation + deltaRotation;
+
+    arrow.style.transform = `translate(-50%, -50%) rotate(${finalRotation}deg)`;
+  }
+
   // ── Mostrar flecha de dirección permanente ────────────────────────
   function showDirectionArrow(direction, label) {
     const arrow = els.directionArrow();
@@ -162,8 +190,14 @@ const UI = (() => {
     if (symbol) symbol.textContent = dirData.icon;
     if (arrowLabel) arrowLabel.textContent = label || 'Próximo';
 
+    // Guardar rotación base y referencia de orientación
+    arrow.dataset.baseRotation = dirData.angle;
+    referenceOrientation.alpha = deviceOrientation.alpha;
+
     arrow.style.transform = `translate(-50%, -50%) rotate(${dirData.angle}deg)`;
     arrow.classList.add('active');
+
+    updateArrowRotation();
   }
 
   function hideDirectionArrow() {
