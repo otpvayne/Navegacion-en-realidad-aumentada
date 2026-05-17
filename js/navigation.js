@@ -113,7 +113,10 @@ const NAV = (() => {
     } else {
       // Avanzar al siguiente checkpoint
       UI.showDetectionFeedback(expected.detected);
-      UI.showDirectionArrow(lastDetectedDirection, getCurrentCheckpoint().title);
+      // Mostrar nombre del PRÓXIMO checkpoint en la flecha
+      const nextCheckpoint = CHECKPOINTS[currentIndex + 1];
+      const nextName = nextCheckpoint ? nextCheckpoint.title : 'Destino';
+      UI.showDirectionArrow(lastDetectedDirection, nextName);
       setTimeout(() => {
         currentIndex++;
         UI.updateStep(getCurrentCheckpoint(), currentIndex, CHECKPOINTS.length);
